@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
+import { NotFoundError } from "../errors/NotFoundError";
 
-export const getLoans = (req: Request, res: Response) => {
-  res.json({ message: "All high-risk loans retrieved successfully" });
-};
 
 export const createLoan = (req: Request, res: Response) => {
   res.json({ message: "Loan created successfully" });
@@ -18,4 +16,8 @@ export const updateLoan = (req: Request, res: Response) => {
 
 export const deleteLoan = (req: Request, res: Response) => {
   res.json({ message: `Loan ${req.params.id} deleted successfully` });
+};
+
+export const getLoans = (req: Request, res: Response) => {
+    throw new NotFoundError('Loans not found');
 };

@@ -1,28 +1,23 @@
 import express from "express";
-import {
-    accessLogger,
-    errorLogger,
-    consoleLogger,
-} from "./api/v1/middleware/logger";
-import errorHandler from "./api/v1/middleware/errorHandler";
+import loanRouter from "./api/v1/routes/loanRoutes";
 
 const app = express();
 
-// Logging middleware (should be applied early in the middleware stack)
-if (process.env.NODE_ENV === "production") {
-    // In production, log to files
-    app.use(accessLogger);
-    app.use(errorLogger);
-} else {
-    // In development, log to console for immediate feedback
-    app.use(consoleLogger);
-}
-
-// Body parsing middleware
+// Body parsing
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Mount loan routes
+app.use("/api/v1/loans", loanRouter);
 
-// Global error handling middleware (MUST be applied last)
-app.use(errorHandler);
+// Health check
+app.get("/health", (req, res) => res.status(200).send("OK"));
+
+// Global error handler (optional)
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!" });
+});
 
 export default app;
+
